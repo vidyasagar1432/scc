@@ -1,149 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Cotton Calculator</title>
-    <style>
-        .calculator-container {
-            max-width: 400px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        label {
-            margin-bottom: 10px;
-        }
-
-        input[type="number"] {
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-        }
-
-        button[type="submit"] {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #3e8e41;
-        }
-
-        .result-container {
-            margin-top: 20px;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        li span:first-child {
-            font-weight: bold;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotton Calculator - Vue.js</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 
-<body>
-    <div class="calculator-container">
-        <h1>Cotton Calculator</h1>
-        <form>
-            <label for="cotton-weight">Cotton Weight (kg):</label>
-            <input type="number" id="cotton-weight" value="" />
-            <label for="cotton-price">Cotton Price per Quintal:</label>
-            <input type="number" id="cotton-price" value="" />
-            <button type="submit">Calculate</button>
-        </form>
-        <div class="result-container">
-            <h2>Result:</h2>
-            <ul>
-                <li><span>Original Weight:</span> <span id="original-weight"></span></li>
-                <li><span>Weight Cut:</span> <span id="weight-cut"></span></li>
-                <li><span>Weight After Cut:</span> <span id="weight-after-cut"></span></li>
-                <li><span>Amount After Cut:</span> <span id="amount-after-cut"></span></li>
-                <li><span>Hamaley Cut Price:</span> <span id="hamaley-cut-price"></span></li>
-                <li><span>Final Amount:</span> <span id="final-amount"></span></li>
-            </ul>
+<body
+    class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="w-full max-w-lg mx-auto">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-6">Cotton Calculator</h1>
+
+            <form class="space-y-6">
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <label for="cotton-weight"
+                            class="block font-semibold text-lg text-gray-700 dark:text-gray-300">Cotton Weight
+                            (kg):</label>
+                        <input v-model.number="cottonWeight" type="number" id="cotton-weight" @input="calculate"
+                            class="w-full mt-2 p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600" />
+                    </div>
+                    <div class="flex-1">
+                        <label for="cotton-price"
+                            class="block font-semibold text-lg text-gray-700 dark:text-gray-300">Cotton Price per
+                            Quintal:</label>
+                        <input v-model.number="cottonPrice" type="number" id="cotton-price" @input="calculate"
+                            class="w-full mt-2 p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600" />
+                    </div>
+                </div>
+            </form>
+
+            <!-- Results Container -->
+            <div v-if="resultVisible"
+                class="result-container bg-white dark:bg-gray-800 p-6 mt-8 rounded-lg shadow-md max-w-full">
+                <h2 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 text-center">Calculation
+                    Results</h2>
+                <ul class="space-y-4">
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Original Weight:</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">{{ originalWeight.toFixed(2)
+                            }}</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight Cut:</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">{{ weightCut }}</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight After Cut:</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">{{ weightAfterCut.toFixed(2)
+                            }}</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Amount After Cut:</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">₹{{
+                            amountAfterCut.toLocaleString() }}</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Hamaley Cut Price:</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">₹{{
+                            hamaleyCutPrice.toLocaleString() }}</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Final Amount:</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">₹{{
+                            finalAmount.toLocaleString() }}</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <script>
-        const calculatorForm = document.querySelector('form');
-        const resultContainer = document.querySelector('.result-container');
-
-        calculatorForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const cottonWeight = parseInt(document.querySelector('#cotton-weight').value);
-            const cottonPrice = parseInt(document.querySelector('#cotton-price').value);
-            const result = calculateFinalResult(cottonWeight, cottonPrice);
-            displayResult(result);
+        const app = Vue.createApp({
+            data() {
+                return {
+                    cottonWeight: 0,
+                    cottonPrice: 0,
+                    resultVisible: false,
+                    originalWeight: 0,
+                    weightCut: 0,
+                    weightAfterCut: 0,
+                    amountAfterCut: 0,
+                    hamaleyCutPrice: 0,
+                    finalAmount: 0,
+                };
+            },
+            methods: {
+                calculate() {
+                    this.originalWeight = this.convertKgToQuintal(this.cottonWeight);
+                    const [intPart, decimalPart] = this.splitQuintalParts(this.originalWeight);
+                    const [weightCut, hamaleyCutPrice] = this.calculateCuts(intPart, decimalPart);
+                    this.weightCut = weightCut;
+                    this.hamaleyCutPrice = hamaleyCutPrice;
+                    this.weightAfterCut = this.convertKgToQuintal(this.cottonWeight - weightCut);
+                    this.amountAfterCut = Math.floor(this.weightAfterCut * this.cottonPrice);
+                    this.finalAmount = this.amountAfterCut - hamaleyCutPrice;
+                    this.resultVisible = true;
+                },
+                convertKgToQuintal(weightKg) {
+                    return weightKg / 100;
+                },
+                splitQuintalParts(weightQuintal) {
+                    const intPart = Math.floor(weightQuintal);
+                    const decimalPart = weightQuintal - intPart;
+                    return [intPart, decimalPart];
+                },
+                calculateCuts(intPart, decimalPart) {
+                    let weightCut;
+                    if (decimalPart >= 0.50) {
+                        weightCut = intPart * 2 + 2;
+                    } else if (decimalPart > 0.10) {
+                        weightCut = intPart * 2 + 1;
+                    } else {
+                        weightCut = intPart * 2;
+                    }
+                    const hamaleyCutPrice = decimalPart >= 0.10 ? (intPart + 1) * 30 : intPart * 30;
+                    return [weightCut, hamaleyCutPrice];
+                }
+            }
         });
 
-        function displayResult(result) {
-            document.querySelector('#original-weight').textContent = result.originalWeight.toFixed(2);
-            document.querySelector('#weight-cut').textContent = result.weightCut;
-            document.querySelector('#weight-after-cut').textContent = result.weightAfterCut.toFixed(2);
-            document.querySelector('#amount-after-cut').textContent = result.amountAfterCut;
-            document.querySelector('#hamaley-cut-price').textContent = result.hamaleyCutPrice;
-            document.querySelector('#final-amount').textContent = result.finalAmount;
-        }
-
-        function calculateFinalResult(cottonWeightKg, cottonPricePerQuintal) {
-            const cottonWeightQuintal = convertKgToQuintal(cottonWeightKg);
-            const [intPart, decimalPart] = splitQuintalParts(cottonWeightQuintal);
-            const [weightCut, hamaleyCutPrice] = calculateCuts(intPart, decimalPart);
-            const cottonWeightAfterCut = convertKgToQuintal(cottonWeightKg - weightCut);
-            const amountAfterCut = Math.floor(cottonWeightAfterCut * cottonPricePerQuintal);
-            const finalAmount = amountAfterCut - hamaleyCutPrice;
-            return {
-                originalWeight: cottonWeightQuintal,
-                weightCut,
-                weightAfterCut: cottonWeightAfterCut,
-                amountAfterCut,
-                hamaleyCutPrice,
-                finalAmount,
-            };
-        }
-
-        function convertKgToQuintal(weightKg) {
-            return weightKg / 100;
-        }
-
-        function splitQuintalParts(weightQuintal) {
-            const intPart = Math.floor(weightQuintal);
-            const decimalPart = weightQuintal - intPart;
-            return [intPart, decimalPart];
-        }
-        function calculateCuts(intPart, decimalPart) {
-            let weightCut;
-            if (decimalPart >= 0.50) {
-                weightCut = intPart * 2 + 2;
-            } else if (decimalPart > 0.10) {
-                weightCut = intPart * 2 + 1;
-            } else {
-                weightCut = intPart * 2;
-            }
-            const hamalyCut = decimalPart >= 0.10 ? (intPart + 1) * 30 : intPart * 30;
-            return [weightCut, hamalyCut];
-        }
+        app.mount('#app');
     </script>
 </body>
 
