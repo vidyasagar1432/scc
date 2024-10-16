@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotton Calculator - Vue.js</title>
+    <title>Cotton Calculator - Editable Results</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
@@ -12,64 +12,169 @@
 <body
     class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex items-center justify-center p-4">
     <div id="app" class="w-full max-w-lg mx-auto">
+        <!-- Tabs -->
         <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-6">Cotton Calculator</h1>
+            <div class="flex justify-around mb-6">
+                <button @click="currentTab = 'tab1'"
+                    :class="currentTab === 'tab1' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'"
+                    class="px-4 py-2 rounded-lg">Standard Calculation</button>
+                <button @click="currentTab = 'tab2'"
+                    :class="currentTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'"
+                    class="px-4 py-2 rounded-lg">Bag Weight Calculation</button>
+            </div>
 
-            <form class="space-y-6">
-                <div class="flex space-x-4">
-                    <div class="flex-1">
-                        <label for="cotton-weight"
-                            class="block font-semibold text-lg text-gray-700 dark:text-gray-300">Cotton Weight
-                            (kg):</label>
-                        <input v-model.number="cottonWeight" type="number" id="cotton-weight" @input="calculate"
-                            class="w-full mt-2 p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600" />
-                    </div>
-                    <div class="flex-1">
-                        <label for="cotton-price"
-                            class="block font-semibold text-lg text-gray-700 dark:text-gray-300">Cotton Price per
-                            Quintal:</label>
-                        <input v-model.number="cottonPrice" type="number" id="cotton-price" @input="calculate"
-                            class="w-full mt-2 p-3 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600" />
+            <!-- Tab 1: Standard Calculation -->
+            <div v-if="currentTab === 'tab1'">
+                <div class="result-container bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-full">
+                    <ul class="space-y-4">
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Price:</span>
+                            <input v-model.number="cottonPrice" type="number" id="cotton-price" @input="calculate"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight (kg):</span>
+                            <input v-model.number="cottonWeight" type="number" id="cotton-weight" @input="calculate"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight Cut (kg):</span>
+                            <input type="number" v-model.number="weightCut" @input="calculateFromWeightCut" step="any"
+                                inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight After Cut
+                                (Quintal):</span>
+                            <input type="number" v-model.number="weightAfterCut" @input="calculateFromWeightAfterCut"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Amount After
+                                Cut:</span>
+                            <input type="number" v-model.number="amountAfterCut" @input="calculateFromAmountAfterCut"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Labour Charges:</span>
+                            <input type="number" v-model.number="hamaleyCutPrice" @input="calculateFromHamaleyCutPrice"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Final Amount:</span>
+                            <input type="number" v-model.number="finalAmount" @input="calculateFromFinalAmount"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab 2: Bag Weight Calculation (Updated with Editable Results) -->
+            <div v-if="currentTab === 'tab2'">
+                <div class="result-container bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-full">
+                    <ul class="space-y-4">
+                        <li class="flex justify-between">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Cotton Price
+                                (₹/quintal):</span>
+                            <input v-model.number="cottonPriceTab2" type="number" @input="calculateBagWeights"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </li>
+
+                        <li v-for="(bagWeight, index) in bagWeights" :key="index"
+                            class="flex justify-between items-center">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Bag {{ index + 1 }}
+                                (kg):</span>
+                            <input v-model.number="bagWeights[index]" @input="calculateBagWeights" type="number"
+                                step="any" inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                            <button @click="removeBag(index)" class="text-red-500 font-bold px-2">Remove</button>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Add Bags (kg):</span>
+                            <input v-model="newBagWeight" @keyup.enter="addBag" type="number" step="any"
+                                inputmode="numeric"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700"
+                                placeholder="Enter" />
+                        </li>
+                    </ul>
+
+                    <!-- Editable Calculation Results -->
+                    <div v-if="bagWeightResult" class="mt-6 space-y-2">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Calculation Results:</h3>
+
+                        <!-- Original Weight (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Original Weight
+                                (quintals):</label>
+                            <input v-model.number="bagWeightResult.original_weight" @input="onResultChange"
+                                type="number" step="any"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
+                        <!-- Number of Bags (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Number of
+                                Bags:</label>
+                            <input v-model.number="bagWeightResult.number_of_bags" @input="onResultChange" type="number"
+                                step="1"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
+                        <!-- Weight Cut (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Weight Cut
+                                (kg):</label>
+                            <input v-model.number="bagWeightResult.weight_cut" @input="onResultChange" type="number"
+                                step="1"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
+                        <!-- Weight After Cut (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Weight After Cut
+                                (quintals):</label>
+                            <input v-model.number="bagWeightResult.weight_after_cut" @input="onResultChange"
+                                type="number" step="any"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
+                        <!-- Amount After Cut (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Amount After Cut
+                                (₹):</label>
+                            <input v-model.number="bagWeightResult.amount_after_cut" @input="onResultChange"
+                                type="number" step="any"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
+                        <!-- Hamaley Cut Price (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Hamaley Cut Price
+                                (₹):</label>
+                            <input v-model.number="bagWeightResult.hamaley_cut_price" @input="onResultChange"
+                                type="number" step="any"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
+                        <!-- Final Amount (Editable) -->
+                        <div class="flex justify-between">
+                            <label class="text-lg font-semibold text-gray-700 dark:text-gray-300">Final Amount
+                                (₹):</label>
+                            <input v-model.number="bagWeightResult.final_amount" @input="onResultChange" type="number"
+                                step="any"
+                                class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                        </div>
+
                     </div>
                 </div>
-            </form>
-
-            <!-- Results Container -->
-            <div v-if="resultVisible"
-                class="result-container bg-white dark:bg-gray-800 p-6 mt-8 rounded-lg shadow-md max-w-full">
-                <h2 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 text-center">Calculation
-                    Results</h2>
-                <ul class="space-y-4">
-                    <li class="flex justify-between">
-                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Original Weight:</span>
-                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">{{ originalWeight.toFixed(2)
-                            }}</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight Cut:</span>
-                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">{{ weightCut }}</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight After Cut:</span>
-                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">{{ weightAfterCut.toFixed(2)
-                            }}</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Amount After Cut:</span>
-                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">₹{{
-                            amountAfterCut.toLocaleString() }}</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Hamaley Cut Price:</span>
-                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">₹{{
-                            hamaleyCutPrice.toLocaleString() }}</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Final Amount:</span>
-                        <span class="font-bold text-blue-600 dark:text-blue-400 text-2xl">₹{{
-                            finalAmount.toLocaleString() }}</span>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
@@ -78,15 +183,29 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    cottonWeight: 0,
+                    currentTab: 'tab1',  // 'tab1' = Standard, 'tab2' = Bag Weight Calculation
+                    // Standard Calculation Variables
                     cottonPrice: 0,
-                    resultVisible: false,
+                    cottonWeight: 0,
+                    resultVisible: true,
                     originalWeight: 0,
                     weightCut: 0,
                     weightAfterCut: 0,
                     amountAfterCut: 0,
                     hamaleyCutPrice: 0,
                     finalAmount: 0,
+                    cottonPriceTab2: 0,
+                    newBagWeight: null,
+                    bagWeights: [],
+                    bagWeightResult: {
+                        original_weight: 0,
+                        number_of_bags: 0,
+                        weight_cut: 0,
+                        weight_after_cut: 0,
+                        amount_after_cut: 0,
+                        hamaley_cut_price: 0,
+                        final_amount: 0
+                    }
                 };
             },
             methods: {
@@ -100,6 +219,33 @@
                     this.amountAfterCut = Math.floor(this.weightAfterCut * this.cottonPrice);
                     this.finalAmount = this.amountAfterCut - hamaleyCutPrice;
                     this.resultVisible = true;
+                },
+                calculateFromOriginalWeight() {
+                    const cottonWeightKg = this.originalWeight * 100;
+                    this.weightCut = this.calculateCutFromWeight(this.originalWeight);
+                    this.weightAfterCut = this.convertKgToQuintal(cottonWeightKg - this.weightCut);
+                    this.amountAfterCut = Math.floor(this.weightAfterCut * this.cottonPrice);
+                    this.finalAmount = this.amountAfterCut - this.hamaleyCutPrice;
+                },
+                calculateFromWeightCut() {
+                    const cottonWeightKg = this.originalWeight * 100;
+                    this.weightAfterCut = this.convertKgToQuintal(cottonWeightKg - this.weightCut);
+                    this.amountAfterCut = Math.floor(this.weightAfterCut * this.cottonPrice);
+                    this.finalAmount = this.amountAfterCut - this.hamaleyCutPrice;
+                },
+                calculateFromWeightAfterCut() {
+                    this.weightCut = Math.floor(this.originalWeight * 100 - this.weightAfterCut * 100);
+                    this.amountAfterCut = Math.floor(this.weightAfterCut * this.cottonPrice);
+                    this.finalAmount = this.amountAfterCut - this.hamaleyCutPrice;
+                },
+                calculateFromAmountAfterCut() {
+                    this.finalAmount = this.amountAfterCut - this.hamaleyCutPrice;
+                },
+                calculateFromHamaleyCutPrice() {
+                    this.finalAmount = this.amountAfterCut - this.hamaleyCutPrice;
+                },
+                calculateFromFinalAmount() {
+                    this.hamaleyCutPrice = this.amountAfterCut - this.finalAmount;
                 },
                 convertKgToQuintal(weightKg) {
                     return weightKg / 100;
@@ -120,7 +266,57 @@
                     }
                     const hamaleyCutPrice = decimalPart >= 0.10 ? (intPart + 1) * 30 : intPart * 30;
                     return [weightCut, hamaleyCutPrice];
+                },
+                calculateBagWeights() {
+                    const totalWeightKg = this.bagWeights.reduce((acc, weight) => acc + weight, 0);
+                    const quintals = totalWeightKg / 100;
+                    const numberOfBags = this.bagWeights.length;
+                    const weightCut = numberOfBags;
+                    const hamaleyCut = numberOfBags * 20;
+                    const weightAfterCut = (totalWeightKg - weightCut) / 100;
+                    const amountAfterCut = Math.floor(weightAfterCut * this.cottonPriceTab2);
+                    const finalAmount = amountAfterCut - hamaleyCut;
+
+                    this.bagWeightResult = {
+                        original_weight: quintals,
+                        number_of_bags: numberOfBags,
+                        weight_cut: weightCut,
+                        weight_after_cut: weightAfterCut,
+                        amount_after_cut: amountAfterCut,
+                        hamaley_cut_price: hamaleyCut,
+                        final_amount: finalAmount
+                    };
+                },
+                addBag() {
+                    if (this.newBagWeight) {
+                        this.bagWeights.push(this.newBagWeight);
+                        this.newBagWeight = null;
+                        this.calculateBagWeights();
+                    }
+                },
+                removeBag(index) {
+                    this.bagWeights.splice(index, 1);
+                    this.calculateBagWeights();
+                },
+                onResultChange() {
+                    // If the number of bags is changed, recalculate weight cut and hamaley cut price
+                    this.bagWeightResult.hamaley_cut_price = this.bagWeightResult.number_of_bags * 20; // Hamaley cut price is calculated per bag
+
+                    // 1. If the weight cut or original weight is changed, recalculate weight after cut
+                    const cottonWeightKg = this.bagWeights.reduce((total, weight) => total + weight, 0); // Calculate the total weight of all bags in kg
+                    const cottonWeightQuintal = cottonWeightKg / 100; // Convert total weight to quintals
+                    this.bagWeightResult.original_weight = cottonWeightQuintal; // Update original weight
+
+                    // 2. Update weight after cut based on weight cut
+                    this.bagWeightResult.weight_after_cut = (cottonWeightKg - this.bagWeightResult.weight_cut) / 100; // Weight after cut in quintals
+
+                    // 3. Recalculate the amount after cut based on weight after cut and cotton price per quintal
+                    this.bagWeightResult.amount_after_cut = Math.round(this.bagWeightResult.weight_after_cut * this.cottonPriceTab2);
+
+                    // 4. Final amount is the amount after cut minus the hamaley cut price
+                    this.bagWeightResult.final_amount = this.bagWeightResult.amount_after_cut - this.bagWeightResult.hamaley_cut_price;
                 }
+
             }
         });
 
