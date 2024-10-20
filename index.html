@@ -15,6 +15,7 @@
         <!-- Tabs -->
         <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-6">Cotton Calculator</h1>
+
             <div class="flex justify-around mb-6">
                 <button @click="currentTab = 'tab1'"
                     :class="currentTab === 'tab1' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'"
@@ -26,6 +27,18 @@
 
             <!-- Tab 1: Standard Calculation -->
             <div v-if="currentTab === 'tab1'">
+                <div class="flex justify-around mb-6">
+                    <input type="number" v-model.number="weightCutSmall" @input="calculate" step="any"
+                        inputmode="numeric"
+                        class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-14 p-1  rounded bg-gray-50 dark:bg-gray-700" />
+                        
+                        <input type="number" v-model.number="weightCutLarge" @input="calculate" step="any"
+                        inputmode="numeric"
+                        class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-14 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    <input type="number" v-model.number="hamaleyCutWeightSmall" @input="calculate" step="any"
+                        inputmode="numeric"
+                        class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-14 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                </div>
                 <div class="result-container bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-full">
                     <ul class="space-y-4">
                         <li class="flex justify-between">
@@ -82,7 +95,7 @@
                     <ul class="space-y-4">
                         <li class="flex justify-between">
                             <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Cotton Price
-                                (₹/quintal):</span>
+                                (₹):</span>
                             <input v-model.number="cottonPriceTab2" type="number" @input="calculateBagWeights"
                                 step="any" inputmode="numeric"
                                 class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700" />
@@ -100,7 +113,6 @@
                         <li class="flex justify-between items-center">
                             <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Add Bags (kg):</span>
                             <input v-model="newBagWeight" @keyup.enter="addBag" type="number" step="any"
-                                inputmode="numeric"
                                 class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-32 p-1 rounded bg-gray-50 dark:bg-gray-700"
                                 placeholder="Enter" />
                         </li>
@@ -185,6 +197,10 @@
                 return {
                     currentTab: 'tab1',  // 'tab1' = Standard, 'tab2' = Bag Weight Calculation
                     // Standard Calculation Variables
+                    weightCutSmall: 10,
+                    weightCutLarge: 60,
+                    hamaleyCutWeightSmall: 10,
+                    hamaleyCutPriceLarge: 0,
                     cottonPrice: 0,
                     cottonWeight: 0,
                     resultVisible: true,
@@ -257,14 +273,17 @@
                 },
                 calculateCuts(intPart, decimalPart) {
                     let weightCut;
-                    if (decimalPart >= 0.50) {
+                    const weightCutLarge = this.weightCutLarge;
+                    const weightCutSmall = this.weightCutSmall;
+                    const hamaleyCutWeightSmall = this.hamaleyCutWeightSmall;
+                    if (decimalPart >= (weightCutLarge) / 100) {
                         weightCut = intPart * 2 + 2;
-                    } else if (decimalPart > 0.10) {
+                    } else if (decimalPart >= (this.weightCutSmall) / 100) {
                         weightCut = intPart * 2 + 1;
                     } else {
                         weightCut = intPart * 2;
                     }
-                    const hamaleyCutPrice = decimalPart >= 0.10 ? (intPart + 1) * 30 : intPart * 30;
+                    const hamaleyCutPrice = decimalPart >= (hamaleyCutWeightSmall) / 100 ? (intPart + 1) * 30 : intPart * 30;
                     return [weightCut, hamaleyCutPrice];
                 },
                 calculateBagWeights() {
