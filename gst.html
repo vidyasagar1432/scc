@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body
+    class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="w-full max-w-lg mx-auto">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-6">GST Calculator</h1>
+            <div class="result-container bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-full">
+                <ul class="space-y-4">
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Price:</span>
+                        <input v-model.number="cottonPrice" type="number" @input="calculate" step="any"
+                            inputmode="numeric"
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Net Weight (QTL):</span>
+                        <input v-model.number="cottonNetWeight" type="number" @input="calculate" step="any"
+                            inputmode="numeric"
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight Cut (QTL):</span>
+                        <input v-model.number="weightCut" type="number" @input="calculate" step="any"
+                            inputmode="numeric"
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Weight (QTL):</span>
+                        <input v-model.number="cottonWeight" disabled type="number" @input="calculate" step="any"
+                            inputmode="numeric"
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Amount (₹):</span>
+                        <input type="text" :value="formattedAmount" disabled
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">GST (₹):</span>
+                        <input type="text" :value="formattedGst" disabled
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">CGST (₹):</span>
+                        <input type="text" :value="formattedCgst" disabled
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">SGST (₹):</span>
+                        <input type="text" :value="formattedSgst" disabled
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">Taxable Amount (₹):</span>
+                        <input type="text" :value="formattedTaxableAmount" disabled
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="font-semibold text-lg text-gray-700 dark:text-gray-300">MF(1%) (₹):</span>
+                        <input type="text" :value="formattedMf" disabled
+                            class="font-bold text-blue-600 dark:text-blue-400 text-2xl w-48 p-1 rounded bg-gray-50 dark:bg-gray-700" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        function formatNumberInIndianStyle(num) {
+            return num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    cottonPrice: 0,
+                    cottonNetWeight: 0,
+                    weightCut: 1,
+                    cottonWeight: 0,
+                    Weight: 0,
+                    amount: 0,
+                    gst: 0,
+                    cgst: 0,
+                    sgst: 0,
+                    taxableAmount: 0,
+                    mf: 0,
+                };
+            },
+            computed: {
+                formattedAmount() {
+                    return formatNumberInIndianStyle(this.amount);
+                },
+                formattedGst() {
+                    return formatNumberInIndianStyle(this.gst);
+                },
+                formattedCgst() {
+                    return formatNumberInIndianStyle(this.cgst);
+                },
+                formattedSgst() {
+                    return formatNumberInIndianStyle(this.sgst);
+                },
+                formattedTaxableAmount() {
+                    return formatNumberInIndianStyle(this.taxableAmount);
+                },
+                formattedMf() {
+                    return formatNumberInIndianStyle(this.mf);
+                }
+            },
+            methods: {
+                calculate() {
+                    this.cottonWeight = (this.cottonNetWeight - this.weightCut).toFixed(2);
+                    this.amount = this.cottonPrice * this.cottonWeight;
+                    this.gst = this.amount * 0.05; // 5% GST
+                    this.cgst = this.gst / 2;
+                    this.sgst = this.gst / 2;
+                    this.taxableAmount = this.amount + this.gst;
+                    this.mf = this.amount * 0.01;
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
