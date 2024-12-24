@@ -71,8 +71,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(farmer, index) in farmers" :key="index">
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.serialNumber }}</td>
+          <tr v-for="(farmer, index) in randomizedFarmers" :key="index">
+            <td class="border border-gray-300 px-4 py-2">{{ index + 1 }}</td>
             <td class="border border-gray-300 px-4 py-2">{{ farmer.weight.toFixed(2) }}</td>
             <td class="border border-gray-300 px-4 py-2">{{ farmer.price }}</td>
             <td class="border border-gray-300 px-4 py-2">{{ farmer.amount.toFixed(2) }}</td>
@@ -104,6 +104,7 @@
             amount: 0,
           },
           farmers: [],
+          randomizedFarmers: [],
           totalWeight: 0,
           totalAmount: 0,
         };
@@ -124,21 +125,23 @@
           // Adjust prices to match the target total amount
           const prices = this.adjustPrices(weights, targetAmount, price);
 
-          // Generate farmers data with serial numbers
+          // Generate farmers data
           this.farmers = weights.map((w, i) => {
             const p = prices[i];
             const farmerAmount = w * p;
             return {
-              serialNumber: i + 1,
               weight: w,
               price: p,
               amount: farmerAmount,
             };
           });
 
+          // Randomize farmer list while keeping serial numbers ordered
+          this.randomizedFarmers = this.shuffleArray([...this.farmers]);
+
           // Calculate totals
           this.totalWeight = weights.reduce((sum, w) => sum + w, 0);
-          this.totalAmount = this.farmers.reduce((sum, farmer) => sum + farmer.amount, 0);
+          this.totalAmount = this.randomizedFarmers.reduce((sum, farmer) => sum + farmer.amount, 0);
         },
         generateHighPriorityWeights(total, count) {
           const minWeight = 9;
@@ -201,6 +204,13 @@
               return items[i];
             }
           }
+        },
+        shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
         },
       },
     });
