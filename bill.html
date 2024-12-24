@@ -11,211 +11,154 @@
 </head>
 <body class="bg-gray-100">
 
-  <div id="app" class="p-8 min-h-screen">
-    <h1 class="text-2xl font-bold mb-4">Farmer Distribution</h1>
-    
-    <!-- Input Form -->
-    <form @submit.prevent="generateDistribution" class="mb-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block font-medium mb-1">Total Weight (quintals)</label>
-          <input
-            v-model.number="inputData.weight"
-            type="number"
-            step="0.01"
-            placeholder="100.00"
-            class="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label class="block font-medium mb-1">Price (₹/quintal)</label>
-          <input
-            v-model.number="inputData.price"
-            type="number"
-            step="0.01"
-            placeholder="6900.00"
-            class="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label class="block font-medium mb-1">Total Amount (₹)</label>
-          <input
-            v-model.number="inputData.amount"
-            type="number"
-            step="0.01"
-            placeholder="200000.00"
-            class="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
+<div id="app" class="p-8 min-h-screen">
+  <h1 class="text-2xl font-bold mb-4">Farmer Distribution</h1>
+  
+  <!-- Input Form -->
+  <form @submit.prevent="generateDistribution" class="mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block font-medium mb-1">Total Weight (quintals)</label>
+        <input
+          v-model.number="inputData.weight"
+          type="number"
+          step="0.01"
+          placeholder="100.00"
+          class="w-full p-2 border border-gray-300 rounded"
+          required
+        />
       </div>
-      <button
-        type="submit"
-        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Generate Distribution
-      </button>
-    </form>
-
-    <!-- Output Table -->
-    <div v-if="farmers.length > 0" class="overflow-x-auto">
-      <table class="table-auto w-full border-collapse border border-gray-300">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="border border-gray-300 px-4 py-2">Serial Number</th>
-            <th class="border border-gray-300 px-4 py-2">Weight (quintals)</th>
-            <th class="border border-gray-300 px-4 py-2">Price (₹/quintal)</th>
-            <th class="border border-gray-300 px-4 py-2">Amount (₹)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(farmer, index) in randomizedFarmers" :key="index">
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.serialNumber }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.weight.toFixed(2) }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.price }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.amount.toFixed(2) }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr class="bg-gray-100 font-bold">
-            <td class="border border-gray-300 px-4 py-2">Total</td>
-            <td class="border border-gray-300 px-4 py-2">{{ totalWeight.toFixed(2) }}</td>
-            <td class="border border-gray-300 px-4 py-2">-</td>
-            <td class="border border-gray-300 px-4 py-2">{{ totalAmount.toFixed(2) }}</td>
-          </tr>
-          <tr>
-            <td colspan="4" class="text-right p-4">Number of Farmers: {{ farmers.length }}</td>
-          </tr>
-        </tfoot>
-      </table>
+      <div>
+        <label class="block font-medium mb-1">Price (₹/quintal)</label>
+        <input
+          v-model.number="inputData.price"
+          type="number"
+          step="0.01"
+          placeholder="6900.00"
+          class="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+      </div>
+      <div>
+        <label class="block font-medium mb-1">Total Amount (₹)</label>
+        <input
+          v-model.number="inputData.amount"
+          type="number"
+          step="0.01"
+          placeholder="200000.00"
+          class="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+      </div>
     </div>
+    <button
+      type="submit"
+      class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Generate Distribution
+    </button>
+  </form>
+
+  <!-- Output Table -->
+  <div v-if="farmers.length > 0" class="overflow-x-auto">
+    <table class="table-auto w-full border-collapse border border-gray-300">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border border-gray-300 px-4 py-2">Serial Number</th>
+          <th class="border border-gray-300 px-4 py-2">Weight (quintals)</th>
+          <th class="border border-gray-300 px-4 py-2">Price (₹/quintal)</th>
+          <th class="border border-gray-300 px-4 py-2">Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(farmer, index) in farmers" :key="index">
+          <td class="border border-gray-300 px-4 py-2">{{ index + 1 }}</td>
+          <td class="border border-gray-300 px-4 py-2">{{ farmer.weight.toFixed(2) }}</td>
+          <td class="border border-gray-300 px-4 py-2">{{ farmer.price }}</td>
+          <td class="border border-gray-300 px-4 py-2">{{ farmer.amount.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="bg-gray-100 font-bold">
+          <td class="border border-gray-300 px-4 py-2">Total</td>
+          <td class="border border-gray-300 px-4 py-2">{{ totalWeight.toFixed(2) }}</td>
+          <td class="border border-gray-300 px-4 py-2">-</td>
+          <td class="border border-gray-300 px-4 py-2">{{ totalAmount.toFixed(2) }}</td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
+</div>
 
-  <script>
-    new Vue({
-      el: '#app',
-      data() {
-        return {
-          inputData: {
-            weight: 0,
-            price: 0,
-            amount: 0,
-          },
-          farmers: [],
-          randomizedFarmers: [],
-          totalWeight: 0,
-          totalAmount: 0,
-        };
+<script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        inputData: {
+          weight: 0,
+          price: 0,
+          amount: 0,
+        },
+        farmers: [],
+        totalWeight: 0,
+        totalAmount: 0,
+      };
+    },
+    methods: {
+      generateDistribution() {
+        const { weight, price, amount } = this.inputData;
+
+        // Generate farmers
+        const numFarmers = 15; // Fixed number of farmers
+        const weights = this.generateWeights(weight, numFarmers);
+        const prices = this.generatePrices(weights, price, amount);
+
+        // Create farmers list
+        this.farmers = weights.map((w, i) => ({
+          weight: w,
+          price: prices[i],
+          amount: w * prices[i],
+        }));
+
+        // Calculate totals
+        this.totalWeight = this.farmers.reduce((sum, farmer) => sum + farmer.weight, 0);
+        this.totalAmount = this.farmers.reduce((sum, farmer) => sum + farmer.amount, 0);
       },
-      methods: {
-        generateDistribution() {
-          const { weight, price, amount } = this.inputData;
+      generateWeights(totalWeight, numFarmers) {
+        const weights = [];
+        const minWeight = 9; // Minimum weight
+        const maxWeight = Math.min(40, totalWeight / 2); // Maximum weight
 
-          // Ensure number of farmers is between 14 and 16
-          const numFarmers = Math.floor(Math.random() * 3) + 14;
+        let remainingWeight = totalWeight;
 
-          // Generate random weights for farmers
-          const weights = this.generateHighPriorityWeights(weight, numFarmers);
+        while (weights.length < numFarmers) {
+          const weight = Math.min(maxWeight, Math.random() * (maxWeight - minWeight) + minWeight);
+          weights.push(weight);
+          remainingWeight -= weight;
 
-          // Calculate the target total amount
-          const targetAmount = amount - (Math.random() * (50000 - 30000) + 30000);
-
-          // Adjust prices to match the target total amount
-          const prices = this.adjustPrices(weights, targetAmount, price);
-
-          // Generate farmers data with serial numbers
-          this.farmers = weights.map((w, i) => {
-            const p = prices[i];
-            const farmerAmount = w * p;
-            return {
-              serialNumber: i + 1,
-              weight: w,
-              price: p,
-              amount: farmerAmount,
-            };
-          });
-
-          // Randomize farmer list
-          this.randomizedFarmers = this.shuffleArray([...this.farmers]);
-
-          // Calculate totals
-          this.totalWeight = weights.reduce((sum, w) => sum + w, 0);
-          this.totalAmount = this.randomizedFarmers.reduce((sum, farmer) => sum + farmer.amount, 0);
-        },
-        generateHighPriorityWeights(total, count) {
-          const minWeight = 9;
-          const maxWeight = 40;
-          const guaranteedWeight = minWeight * count;
-
-          if (total < guaranteedWeight) {
-            throw new Error(`Total weight (${total}) is too low to distribute at least ${minWeight} quintals per farmer.`);
+          if (remainingWeight < minWeight) {
+            weights[weights.length - 1] += remainingWeight;
+            break;
           }
+        }
 
-          let weights = [];
-          let remainingWeight = total;
-
-          while (weights.length < count) {
-            const maxAllowed = Math.min(maxWeight, remainingWeight);
-            const weight = Math.random() * (maxAllowed - minWeight) + minWeight;
-
-            weights.push(weight);
-            remainingWeight -= weight;
-
-            if (remainingWeight < minWeight) {
-              weights[weights.length - 1] += remainingWeight; // Adjust last farmer
-              break;
-            }
-          }
-
-          // Sort descending to prioritize higher weights
-          return weights.sort((a, b) => b - a).map((w) => parseFloat(w.toFixed(2)));
-        },
-        adjustPrices(weights, targetAmount, basePrice) {
-          const minPrice = basePrice - 200;
-          const maxPrice = basePrice;
-          const priorities = [50, 25, 10];
-          const weightsProbs = [0.5, 0.3, 0.2];
-          let prices = Array(weights.length).fill(basePrice);
-
-          // Adjust prices to match the target amount
-          let currentTotal = prices.reduce((sum, price, i) => sum + price * weights[i], 0);
-
-          while (currentTotal > targetAmount) {
-            for (let i = 0; i < prices.length; i++) {
-              const diff = this.weightedRandom(priorities, weightsProbs);
-              prices[i] = Math.max(minPrice, prices[i] - diff);
-              currentTotal = prices.reduce((sum, price, j) => sum + price * weights[j], 0);
-
-              if (currentTotal <= targetAmount) break;
-            }
-          }
-
-          return prices;
-        },
-        weightedRandom(items, weights) {
-          const total = weights.reduce((acc, w) => acc + w, 0);
-          const rand = Math.random() * total;
-          let cumulative = 0;
-
-          for (let i = 0; i < items.length; i++) {
-            cumulative += weights[i];
-            if (rand < cumulative) {
-              return items[i];
-            }
-          }
-        },
-        shuffleArray(array) {
-          for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-          }
-          return array;
-        },
+        return weights.map((w) => parseFloat(w.toFixed(2)));
       },
-    });
-  </script>
+      generatePrices(weights, maxPrice, targetAmount) {
+        const minPrice = maxPrice - 200; // Prices can range from maxPrice - 200
+        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+        const basePrice = targetAmount / totalWeight;
+
+        return weights.map(() => {
+          let price = Math.random() * (maxPrice - minPrice) + minPrice;
+          price = Math.round(price / 10) * 10; // Round to nearest 10
+          return Math.min(price, maxPrice);
+        });
+      },
+    },
+  });
+</script>
 
 </body>
 </html>
