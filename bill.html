@@ -65,28 +65,35 @@
         <thead class="bg-gray-200">
           <tr>
             <th class="border border-gray-300 px-4 py-2">Serial Number</th>
-            <th class="border border-gray-300 px-4 py-2">Weight (quintals)</th>
+            <th class="border border-gray-300 px-4 py-2">Weight (quintals) & Amount (₹)</th>
             <th class="border border-gray-300 px-4 py-2">Price (₹/quintal)</th>
-            <th class="border border-gray-300 px-4 py-2">Amount (₹)</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(farmer, index) in randomizedFarmers" :key="index">
             <td class="border border-gray-300 px-4 py-2">{{ index + 1 }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.weight.toFixed(2) }}</td>
+            <td class="border border-gray-300 px-4 py-2">
+              <div class="flex justify-between">
+                <span>{{ farmer.weight.toFixed(2) }} quintals</span>
+                <span>{{ farmer.amount.toFixed(2) }} ₹</span>
+              </div>
+            </td>
             <td class="border border-gray-300 px-4 py-2">{{ farmer.price }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ farmer.amount.toFixed(2) }}</td>
           </tr>
         </tbody>
         <tfoot>
           <tr class="bg-gray-100 font-bold">
             <td class="border border-gray-300 px-4 py-2">Total</td>
-            <td class="border border-gray-300 px-4 py-2">{{ totalWeight.toFixed(2) }}</td>
+            <td class="border border-gray-300 px-4 py-2">
+              <div class="flex justify-between">
+                <span>{{ totalWeight.toFixed(2) }} quintals</span>
+                <span>{{ totalAmount.toFixed(2) }} ₹</span>
+              </div>
+            </td>
             <td class="border border-gray-300 px-4 py-2">-</td>
-            <td class="border border-gray-300 px-4 py-2">{{ totalAmount.toFixed(2) }}</td>
           </tr>
           <tr>
-            <td colspan="4" class="text-right p-4">Number of Farmers: {{ farmers.length }}</td>
+            <td colspan="3" class="text-right p-4">Number of Farmers: {{ farmers.length }}</td>
           </tr>
         </tfoot>
       </table>
