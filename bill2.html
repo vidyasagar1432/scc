@@ -182,36 +182,25 @@
         adjustPrices(weights, targetAmount, basePrice) {
           const minPrice = basePrice - 200;
           const maxPrice = basePrice;
-          const priorities = [50, 25, 10];
-          const weightsProbs = [0.5, 0.3, 0.2];
+          const priceIncrement = 50;
           let prices = Array(weights.length).fill(basePrice);
 
           // Adjust prices to match the target amount
           let currentTotal = prices.reduce((sum, price, i) => sum + price * weights[i], 0);
+          const maxIterations = 50;
+          let iteration = 0;
 
-          while (currentTotal > targetAmount) {
+          while (Math.abs(currentTotal - targetAmount) > 500 && iteration < maxIterations) {
             for (let i = 0; i < prices.length; i++) {
-              const diff = this.weightedRandom(priorities, weightsProbs);
-              prices[i] = Math.max(minPrice, prices[i] - diff);
-              currentTotal = prices.reduce((sum, price, j) => sum + price * weights[j], 0);
-
-              if (currentTotal <= targetAmount) break;
+              const priceDiff = Math.floor(Math.random() * priceIncrement / 50) * 50;
+              prices[i] = Math.max(minPrice, prices[i] - priceDiff);
+              currentTotal = prices.reduce((sum, price, i) => sum + price * weights[i], 0);
+              if (Math.abs(currentTotal - targetAmount) < 500) break;
             }
+            iteration++;
           }
 
           return prices;
-        },
-        weightedRandom(items, weights) {
-          const total = weights.reduce((acc, w) => acc + w, 0);
-          const rand = Math.random() * total;
-          let cumulative = 0;
-
-          for (let i = 0; i < items.length; i++) {
-            cumulative += weights[i];
-            if (rand < cumulative) {
-              return items[i];
-            }
-          }
         },
         shuffleArray(array) {
           for (let i = array.length - 1; i > 0; i--) {
