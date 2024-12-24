@@ -18,7 +18,7 @@
     <form @submit.prevent="generateDistribution" class="mb-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="block font-medium mb-1">Total Weight (quintals)</label>
+          <label class="block font-medium mb-1">Total Weight</label>
           <input
             v-model.number="inputData.weight"
             type="number"
@@ -29,7 +29,7 @@
           />
         </div>
         <div>
-          <label class="block font-medium mb-1">Price (₹/quintal)</label>
+          <label class="block font-medium mb-1">Price</label>
           <input
             v-model.number="inputData.price"
             type="number"
@@ -40,7 +40,7 @@
           />
         </div>
         <div>
-          <label class="block font-medium mb-1">Total Amount (₹)</label>
+          <label class="block font-medium mb-1">Total Amount</label>
           <input
             v-model.number="inputData.amount"
             type="number"
@@ -65,8 +65,8 @@
         <thead class="bg-gray-200">
           <tr>
             <th class="border border-gray-300 px-4 py-2">Serial Number</th>
-            <th class="border border-gray-300 px-4 py-2">Weight (quintals) & Amount (₹)</th>
-            <th class="border border-gray-300 px-4 py-2">Price (₹/quintal)</th>
+            <th class="border border-gray-300 px-4 py-2">Weight & Amount</th>
+            <th class="border border-gray-300 px-4 py-2">Price</th>
           </tr>
         </thead>
         <tbody>
@@ -74,7 +74,7 @@
             <td class="border border-gray-300 px-4 py-2">{{ index + 1 }}</td>
             <td class="border border-gray-300 px-4 py-2">
               <div class="flex justify-between">
-                <span>{{ farmer.weight.toFixed(2) }} </span>
+                <span>{{ farmer.weight.toFixed(2) }}</span>
                 <span>{{ farmer.amount.toFixed(2) }}</span>
               </div>
             </td>
@@ -87,7 +87,7 @@
             <td class="border border-gray-300 px-4 py-2">
               <div class="flex justify-between">
                 <span>{{ totalWeight.toFixed(2) }}</span>
-                <span>{{ totalAmount.toFixed(2) }} </span>
+                <span>{{ totalAmount.toFixed(2) }}</span>
               </div>
             </td>
             <td class="border border-gray-300 px-4 py-2">-</td>
