@@ -116,9 +116,9 @@
 
         // Create farmers list
         this.farmers = weights.map((w, i) => ({
-          weight: w,
+          weight: w / 100, // Convert back to quintals
           price: prices[i],
-          amount: w * prices[i],
+          amount: (w / 100) * prices[i],
         }));
 
         // Calculate totals
@@ -127,13 +127,16 @@
       },
       generateWeights(totalWeight, numFarmers) {
         const weights = [];
-        const minWeight = 9; // Minimum weight
-        const maxWeight = Math.min(40, totalWeight / 2); // Maximum weight
-
-        let remainingWeight = totalWeight;
+        const minWeight = 900; // Minimum weight in kgs (9 quintals)
+        const maxWeight = Math.min(4000, totalWeight * 100 / 2); // Max in kgs
+        let remainingWeight = totalWeight * 100; // Convert to kgs
 
         while (weights.length < numFarmers) {
-          const weight = Math.min(maxWeight, Math.random() * (maxWeight - minWeight) + minWeight);
+          let weight = Math.min(maxWeight, Math.random() * (maxWeight - minWeight) + minWeight);
+
+          // Adjust last digit to 0 or 5
+          weight = Math.round(weight / 5) * 5;
+
           weights.push(weight);
           remainingWeight -= weight;
 
@@ -143,7 +146,7 @@
           }
         }
 
-        return weights.map((w) => parseFloat(w.toFixed(2)));
+        return weights.map((w) => Math.round(w)); // Ensure whole numbers
       },
       generatePrices(weights, maxPrice, targetAmount) {
         const minPrice = maxPrice - 200; // Prices can range from maxPrice - 200
