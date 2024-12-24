@@ -115,8 +115,8 @@
           // Determine a reasonable number of farmers (random between 10 and 30 farmers)
           const numFarmers = Math.floor(Math.random() * 21) + 10;
 
-          // Generate random weights for farmers
-          const weights = this.randomWeights(weight, numFarmers);
+          // Generate random weights for farmers with priority for high weights
+          const weights = this.generateHighPriorityWeights(weight, numFarmers);
 
           // Calculate the target total amount
           const targetAmount = amount - (Math.random() * (50000 - 30000) + 30000);
@@ -140,30 +140,33 @@
           this.totalWeight = weights.reduce((sum, w) => sum + w, 0);
           this.totalAmount = this.farmers.reduce((sum, farmer) => sum + farmer.amount, 0);
         },
-        randomWeights(total, count) {
+        generateHighPriorityWeights(total, count) {
           const minWeight = 9;
+          const maxWeight = 40;
           const guaranteedWeight = minWeight * count;
 
           if (total < guaranteedWeight) {
             throw new Error(`Total weight (${total}) is too low to distribute at least ${minWeight} quintals per farmer.`);
           }
 
-          let weights = Array(count).fill(minWeight);
-          let remainingWeight = total - guaranteedWeight;
+          let weights = [];
+          let remainingWeight = total;
 
-          while (remainingWeight > 0) {
-            for (let i = 0; i < count; i++) {
-              if (remainingWeight <= 0) break;
+          while (weights.length < count) {
+            const maxAllowed = Math.min(maxWeight, remainingWeight);
+            const weight = Math.random() * (maxAllowed - minWeight) + minWeight;
 
-              const maxAdditionalWeight = Math.min(40 - weights[i], remainingWeight);
-              const additionalWeight = Math.random() * maxAdditionalWeight;
+            weights.push(weight);
+            remainingWeight -= weight;
 
-              weights[i] += additionalWeight;
-              remainingWeight -= additionalWeight;
+            if (remainingWeight < minWeight) {
+              weights[weights.length - 1] += remainingWeight; // Adjust last farmer
+              break;
             }
           }
 
-          return weights.map((w) => parseFloat(w.toFixed(2)));
+          // Sort descending to prioritize higher weights
+          return weights.sort((a, b) => b - a).map((w) => parseFloat(w.toFixed(2)));
         },
         adjustPrices(weights, targetAmount, basePrice) {
           const minPrice = basePrice - 200;
